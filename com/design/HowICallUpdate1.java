@@ -1,13 +1,9 @@
-package com.gainsight.migrator.service.updater;
+package com.design;
 
-import com.gainsight.migrator.utils.LogDataIdentifier;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.commons.collections.CollectionUtils;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 /**
@@ -18,19 +14,8 @@ public class HowICallUpdate1 {
   public static void main(String[] args) {
     NewUpdateServiceImpl updateServiceImpl = new NewUpdateServiceImpl();
     AssetUpdateProperties assetUpdateProperties = new PlaybookGuy();
-    List<Object> dataList = Lists.newArrayList();
-
-    CompletableFuture updateAction = CompletableFuture.supplyAsync(()-> {
-      updateServiceImpl.update(assetUpdateProperties, dataList);
-      return "";
-    });
-
-    CollectionUtils.isNotEmpty(null);
-
-    updateAction.thenAccept((response)-> {
-      updateServiceImpl.update(assetUpdateProperties, dataList);
-
-    });
+    List<Object> dataList = new ArrayList();
+    updateServiceImpl.update(assetUpdateProperties, dataList);
   }
 }
 
@@ -57,15 +42,14 @@ class PlaybookGuy implements AssetUpdateProperties {
 
   @Override
   public List<UpdateServiceVO> getUpdateServiceVos() {
-    List<UpdateServiceVO> updateServiceVOs = Lists.newArrayList();
+    List<UpdateServiceVO> updateServiceVOs = new ArrayList();
     UpdateServiceVO updateServiceVO = new UpdateServiceVO();
     updateServiceVO.requestObj = "MyRequest";
     updateServiceVO.transformResponse = this::transformResponse;
     String test = "";
     updateServiceVO.assetIndentifiersMap = () -> {
-        System.out.print(test);
-        Map<String,LogDataIdentifier> map = Maps.newHashMap();
-        return map;
+      Map map = new HashMap();
+      return map;
     };
     updateServiceVO.updateType = new SFDCRestServiceUpdate();
     return updateServiceVOs;
@@ -91,7 +75,7 @@ class UpdateServiceVO {
 
 @FunctionalInterface
 interface AssetIdentifiersMap {
-  Map<String, LogDataIdentifier> get();
+  Map<String, Object> get();
 }
 
 interface UpdateType {
@@ -105,7 +89,7 @@ class SFDCRestServiceUpdate implements UpdateType {
     for(Object data: dataToUpdate) {
       //Get resolver object
       //Read the Log Data Identifiers using the Object identifier Map
-      Map<String, LogDataIdentifier> objectIdentifiersMap = updateServiceVO.assetIndentifiersMap.get();
+      Map<String, Object> objectIdentifiersMap = updateServiceVO.assetIndentifiersMap.get();
       String objectName = updateServiceVO.identifyObject.apply(data);
       data = updateServiceVO.preResolve.apply(data);
       //resolve using the resolver
@@ -135,7 +119,7 @@ class SFDCBulkWriteUpdate implements UpdateType {
       //Get resolver object
       //Identify Object Name
       //Read the Log Data Identifiers using the Object identifier Map
-      Map<String, LogDataIdentifier> objectIdentifiersMap = updateServiceVO.assetIndentifiersMap.get();
+      Map<String, Object> objectIdentifiersMap = updateServiceVO.assetIndentifiersMap.get();
       String objectName = updateServiceVO.identifyObject.apply(data);
       data = updateServiceVO.preResolve.apply(data);
       //resolve using the resolver
